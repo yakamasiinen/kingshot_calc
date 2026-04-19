@@ -86,9 +86,21 @@
         const t = parseFloat(document.getElementById('total').value) || 0;
         const m = parseFloat(document.getElementById('minus').value) || 0;
         const d = parseFloat(document.getElementById('divisor').value) || 1;
-        const ra = (parseFloat(document.getElementById('ratioA').value) || 0) / 100;
-        const rb = (parseFloat(document.getElementById('ratioB').value) || 0) / 100;
-        const rc = (parseFloat(document.getElementById('ratioC').value) || 0) / 100;
+        
+        // 割合の値（％）を取得
+        const raVal = parseFloat(document.getElementById('ratioA').value) || 0;
+        const rbVal = parseFloat(document.getElementById('ratioB').value) || 0;
+        const rcVal = parseFloat(document.getElementById('ratioC').value) || 0;
+
+        // 合計チェック：100%を超えたら警告を出して終了
+        if ((raVal + rbVal + rcVal) > 100) {
+            alert("エラー：割合の合計が100%を超えています！ (" + (raVal + rbVal + rcVal) + "%)");
+            return; // ここで処理を中断
+        }
+
+        const ra = raVal / 100;
+        const rb = rbVal / 100;
+        const rc = rcVal / 100;
 
         const base = (t - m) / d;
         
