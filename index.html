@@ -11,9 +11,14 @@
         .label { background-color: #999; color: white; width: 120px; padding: 10px; text-align: center; font-weight: bold; margin-right: 10px; border-radius: 2px; font-size: 14px; }
         .label-blue { background-color: #5b8bd0; }
         .label-dark { background-color: #666; }
-        input { border: 1px solid #ccc; padding: 10px; font-size: 18px; width: 140px; border-radius: 2px; }
-        .unit { margin-left: 10px; font-size: 16px; color: #555; width: 80px; }
-        .note { font-size: 12px; color: #d9534f; margin-left: 130px; margin-bottom: 15px; font-weight: bold; line-height: 1.2; }
+        input { border: 1px solid #ccc; padding: 10px; font-size: 18px; width: 140px; border-radius: 2px; flex-grow: 1; }
+        .unit { margin-left: 10px; font-size: 16px; color: #555; width: 40px; }
+        
+        /* プリセットボタンのスタイル */
+        .preset-group { display: flex; justify-content: space-between; margin: 15px 0 25px 0; gap: 10px; }
+        .btn-preset { background-color: #fff; border: 1px solid #bbb; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; flex: 1; box-shadow: 0 2px 0 #ccc; }
+        .btn-preset:active { transform: translateY(2px); box-shadow: none; }
+
         .button-group { margin-top: 25px; display: flex; gap: 10px; }
         .btn-calc { background-color: #5b8bd0; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 18px; cursor: pointer; box-shadow: 0 3px 0 #3d66a4; flex: 2; }
         .btn-clear { background-color: #fff; color: #666; border: 1px solid #ccc; padding: 12px; border-radius: 4px; font-size: 18px; cursor: pointer; box-shadow: 0 3px 0 #ddd; flex: 1; }
@@ -27,24 +32,29 @@
 <div class="calc-card">
     <div class="input-row">
         <div class="label">合計</div>
-        <input type="number" id="total" value="1000000">
+        <input type="number" id="total" value="55000">
     </div>
 
     <div class="input-row">
         <div class="label label-blue">集結主</div>
-        <input type="number" id="minus" value="100000">
+        <input type="number" id="minus" value="5000">
     </div>
 
-    <div class="input-row" style="margin-bottom: 5px;">
+    <div class="input-row">
         <div class="label">集結人数</div>
         <input type="number" id="divisor" value="10">
         <span class="unit">人</span>
     </div>
-    <div class="note">※集結主を除いた人数をいれてください</div>
+
+    <div class="preset-group">
+        <button class="btn-preset" onclick="setRatios(60, 20, 20)">🛡️ 防衛</button>
+        <button class="btn-preset" onclick="setRatios(50, 20, 30)">⚔️ 攻撃</button>
+        <button class="btn-preset" onclick="setRatios(10, 20, 70)">🐾 熊罠</button>
+    </div>
 
     <div class="input-row">
         <div class="label label-dark">歩兵 割合</div>
-        <input type="number" id="ratioA" value="50">
+        <input type="number" id="ratioA" value="45">
         <span class="unit">%</span>
     </div>
 
@@ -56,7 +66,7 @@
 
     <div class="input-row">
         <div class="label label-dark">弓兵 割合</div>
-        <input type="number" id="ratioC" value="30">
+        <input type="number" id="ratioC" value="35">
         <span class="unit">%</span>
     </div>
 
@@ -66,47 +76,33 @@
     </div>
 
     <div id="result" class="result-area" style="display:none;">
-        <div class="result-row">
-            <span class="result-label">歩兵：</span>
-            <span id="outA"></span>
-        </div>
-        <div class="result-row">
-            <span class="result-label">騎兵：</span>
-            <span id="outB"></span>
-        </div>
-        <div class="result-row">
-            <span class="result-label">弓兵：</span>
-            <span id="outC"></span>
-        </div>
+        <div class="result-row"><span class="result-label">歩兵：</span><span id="outA"></span></div>
+        <div class="result-row"><span class="result-label">騎兵：</span><span id="outB"></span></div>
+        <div class="result-row"><span class="result-label">弓兵：</span><span id="outC"></span></div>
     </div>
 </div>
 
 <script>
+    function setRatios(a, b, c) {
+        document.getElementById('ratioA').value = a;
+        document.getElementById('ratioB').value = b;
+        document.getElementById('ratioC').value = c;
+        runCalc(); // 数値を入れたらすぐ計算
+    }
+
     function runCalc() {
         const t = parseFloat(document.getElementById('total').value) || 0;
         const m = parseFloat(document.getElementById('minus').value) || 0;
         const d = parseFloat(document.getElementById('divisor').value) || 1;
-        
-        // 割合の値（％）を取得
-        const raVal = parseFloat(document.getElementById('ratioA').value) || 0;
-        const rbVal = parseFloat(document.getElementById('ratioB').value) || 0;
-        const rcVal = parseFloat(document.getElementById('ratioC').value) || 0;
-
-        // 合計チェック：100%を超えたら警告を出して終了
-        if ((raVal + rbVal + rcVal) > 100) {
-            alert("エラー：割合の合計が100%を超えています！ (" + (raVal + rbVal + rcVal) + "%)");
-            return; // ここで処理を中断
-        }
-
-        const ra = raVal / 100;
-        const rb = rbVal / 100;
-        const rc = rcVal / 100;
+        const ra = (parseFloat(document.getElementById('ratioA').value) || 0) / 100;
+        const rb = (parseFloat(document.getElementById('ratioB').value) || 0) / 100;
+        const rc = (parseFloat(document.getElementById('ratioC').value) || 0) / 100;
 
         const base = (t - m) / d;
         
-        document.getElementById('outA').innerText = Math.round(base * ra).toLocaleString() + " 枚";
-        document.getElementById('outB').innerText = Math.round(base * rb).toLocaleString() + " 枚";
-        document.getElementById('outC').innerText = Math.round(base * rc).toLocaleString() + " 枚";
+        document.getElementById('outA').innerText = Math.round(base * ra).toLocaleString() + " 人";
+        document.getElementById('outB').innerText = Math.round(base * rb).toLocaleString() + " 人";
+        document.getElementById('outC').innerText = Math.round(base * rc).toLocaleString() + " 人";
         document.getElementById('result').style.display = 'block';
     }
 
