@@ -14,6 +14,9 @@
         input { border: 1px solid #ccc; padding: 10px; font-size: 18px; width: 140px; border-radius: 2px; flex-grow: 1; }
         .unit { margin-left: 10px; font-size: 16px; color: #555; width: 40px; }
         
+        /* 注釈のスタイル：赤文字・太字で強調 */
+        .note { font-size: 11px; color: #d9534f; margin: -8px 0 12px 130px; font-weight: bold; }
+
         /* プリセットボタンのスタイル */
         .preset-group { display: flex; justify-content: space-between; margin: 15px 0 25px 0; gap: 10px; }
         .btn-preset { background-color: #fff; border: 1px solid #bbb; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; flex: 1; box-shadow: 0 2px 0 #ccc; }
@@ -41,10 +44,11 @@
     </div>
 
     <div class="input-row">
-        <div class="label">集結主を除いた人数</div>
+        <div class="label">集結人数</div>
         <input type="number" id="divisor" value="10">
         <span class="unit">人</span>
     </div>
+    <div class="note">※集結主を除いて入力</div>
 
     <div class="preset-group">
         <button class="btn-preset" onclick="setRatios(60, 20, 20)">🛡️ 防衛</button>
@@ -87,7 +91,7 @@
         document.getElementById('ratioA').value = a;
         document.getElementById('ratioB').value = b;
         document.getElementById('ratioC').value = c;
-        runCalc(); // 数値を入れたらすぐ計算
+        runCalc(); 
     }
 
     function runCalc() {
