@@ -13,6 +13,7 @@
         .label-dark { background-color: #666; }
         input { border: 1px solid #ccc; padding: 10px; font-size: 18px; width: 140px; border-radius: 2px; }
         .unit { margin-left: 10px; font-size: 16px; color: #555; width: 80px; }
+        .note { font-size: 12px; color: #d9534f; margin-left: 130px; margin-bottom: 15px; font-weight: bold; line-height: 1.2; }
         .button-group { margin-top: 25px; display: flex; gap: 10px; }
         .btn-calc { background-color: #5b8bd0; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 18px; cursor: pointer; box-shadow: 0 3px 0 #3d66a4; flex: 2; }
         .btn-clear { background-color: #fff; color: #666; border: 1px solid #ccc; padding: 12px; border-radius: 4px; font-size: 18px; cursor: pointer; box-shadow: 0 3px 0 #ddd; flex: 1; }
@@ -34,11 +35,12 @@
         <input type="number" id="minus" value="5000">
     </div>
 
-    <div class="input-row">
+    <div class="input-row" style="margin-bottom: 5px;">
         <div class="label">集結人数</div>
         <input type="number" id="divisor" value="10">
         <span class="unit">人</span>
     </div>
+    <div class="note">※集結主を除いた人数をいれてください</div>
 
     <div class="input-row">
         <div class="label label-dark">歩兵 割合</div>
