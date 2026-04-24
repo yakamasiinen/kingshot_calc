@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kingshot部隊計算機</title>
+    <title>kingshot部隊計算機(Ver.2.1)</title>
     <style>
         body { font-family: sans-serif; background-color: #f5f5f5; display: flex; justify-content: center; padding: 20px; }
         .calc-card { background-color: #f0f0f0; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; max-width: 480px; }
@@ -14,10 +14,8 @@
         input { border: 1px solid #ccc; padding: 10px; font-size: 18px; width: 140px; border-radius: 2px; flex-grow: 1; }
         .unit { margin-left: 10px; font-size: 16px; color: #555; width: 40px; }
         
-        /* 注釈のスタイル：赤文字・太字で強調 */
         .note { font-size: 11px; color: #d9534f; margin: -8px 0 12px 130px; font-weight: bold; }
 
-        /* プリセットボタンのスタイル */
         .preset-group { display: flex; justify-content: space-between; margin: 15px 0 25px 0; gap: 10px; }
         .btn-preset { background-color: #fff; border: 1px solid #bbb; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; flex: 1; box-shadow: 0 2px 0 #ccc; }
         .btn-preset:active { transform: translateY(2px); box-shadow: none; }
@@ -25,9 +23,12 @@
         .button-group { margin-top: 25px; display: flex; gap: 10px; }
         .btn-calc { background-color: #5b8bd0; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 18px; cursor: pointer; box-shadow: 0 3px 0 #3d66a4; flex: 2; }
         .btn-clear { background-color: #fff; color: #666; border: 1px solid #ccc; padding: 12px; border-radius: 4px; font-size: 18px; cursor: pointer; box-shadow: 0 3px 0 #ddd; flex: 1; }
+        
         .result-area { margin-top: 20px; border-top: 2px solid #ddd; padding-top: 20px; }
         .result-row { display: flex; align-items: center; margin-bottom: 10px; font-size: 20px; font-weight: bold; color: #333; }
         .result-label { width: 100px; color: #666; font-size: 16px; }
+        /* 合計表示用のスタイル */
+        .result-total { color: #5b8bd0; border-top: 1px dashed #ccc; margin-top: 10px; padding-top: 10px; }
     </style>
 </head>
 <body>
@@ -83,6 +84,7 @@
         <div class="result-row"><span class="result-label">歩兵：</span><span id="outA"></span></div>
         <div class="result-row"><span class="result-label">騎兵：</span><span id="outB"></span></div>
         <div class="result-row"><span class="result-label">弓兵：</span><span id="outC"></span></div>
+        <div class="result-row result-total"><span class="result-label">派遣合計：</span><span id="outTotal"></span></div>
     </div>
 </div>
 
@@ -95,18 +97,40 @@
     }
 
     function runCalc() {
+        const raVal = parseFloat(document.getElementById('ratioA').value) || 0;
+        const rbVal = parseFloat(document.getElementById('ratioB').value) || 0;
+        const rcVal = parseFloat(document.getElementById('ratioC').value) || 0;
+
+        // 合計100%チェック
+        const totalRatio = raVal + rbVal + rcVal;
+        if (totalRatio !== 100) {
+            alert("エラー：割合の合計が " + totalRatio + "% です。\n合計を100%にしてください。");
+            document.getElementById('result').style.display = 'none';
+            return;
+        }
+
         const t = parseFloat(document.getElementById('total').value) || 0;
         const m = parseFloat(document.getElementById('minus').value) || 0;
         const d = parseFloat(document.getElementById('divisor').value) || 1;
-        const ra = (parseFloat(document.getElementById('ratioA').value) || 0) / 100;
-        const rb = (parseFloat(document.getElementById('ratioB').value) || 0) / 100;
-        const rc = (parseFloat(document.getElementById('ratioC').value) || 0) / 100;
+
+        const ra = raVal / 100;
+        const rb = rbVal / 100;
+        const rc = rcVal / 100;
 
         const base = (t - m) / d;
         
-        document.getElementById('outA').innerText = Math.round(base * ra).toLocaleString() + " 人";
-        document.getElementById('outB').innerText = Math.round(base * rb).toLocaleString() + " 人";
-        document.getElementById('outC').innerText = Math.round(base * rc).toLocaleString() + " 人";
+        // 各兵種の計算（四捨五入）
+        const valA = Math.round(base * ra);
+        const valB = Math.round(base * rb);
+        const valC = Math.round(base * rc);
+        const sumAll = valA + valB + valC;
+
+        document.getElementById('outA').innerText = valA.toLocaleString() + " 人";
+        document.getElementById('outB').innerText = valB.toLocaleString() + " 人";
+        document.getElementById('outC').innerText = valC.toLocaleString() + " 人";
+        // 合計値を表示
+        document.getElementById('outTotal').innerText = sumAll.toLocaleString() + " 人";
+        
         document.getElementById('result').style.display = 'block';
     }
 
