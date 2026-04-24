@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kingshot部隊計算機(Ver.2.3)</title>
+    <title>kingshot部隊計算機(Ver.2.4)</title>
     <style>
         body { font-family: sans-serif; background-color: #f5f5f5; display: flex; justify-content: center; padding: 20px; }
         .calc-card { background-color: #f0f0f0; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; max-width: 480px; }
@@ -16,9 +16,12 @@
         
         .note { font-size: 11px; color: #5b8bd0; margin: -8px 0 12px 130px; font-weight: bold; }
 
-        .preset-group { display: flex; justify-content: space-between; margin: 15px 0 25px 0; gap: 10px; }
-        .btn-preset { background-color: #fff; border: 1px solid #bbb; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; flex: 1; box-shadow: 0 2px 0 #ccc; }
+        /* プリセットボタングループのスタイル */
+        .preset-section-label { font-size: 12px; color: #666; margin-bottom: 5px; font-weight: bold; }
+        .preset-group { display: flex; flex-wrap: wrap; justify-content: space-between; margin: 5px 0 15px 0; gap: 8px; }
+        .btn-preset { background-color: #fff; border: 1px solid #bbb; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; flex: 1; min-width: 100px; box-shadow: 0 2px 0 #ccc; }
         .btn-preset:active { transform: translateY(2px); box-shadow: none; }
+        .btn-host { border-color: #5b8bd0; color: #3d66a4; } /* 集結主ボタンの色分け */
 
         .button-group { margin-top: 25px; display: flex; gap: 10px; }
         .btn-calc { background-color: #5b8bd0; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 18px; cursor: pointer; box-shadow: 0 3px 0 #3d66a4; flex: 2; }
@@ -33,23 +36,32 @@
 <body>
 
 <div class="calc-card">
+    <div class="preset-section-label">👤 集結主を選択</div>
+    <div class="preset-group">
+        <button class="btn-preset btn-host" onclick="setHost(1061271, 150000)">らるど</button>
+        <button class="btn-preset btn-host" onclick="setHost(10022020, 150000)">ゔぇるひめ</button>
+        <button class="btn-preset btn-host" onclick="setHost(1030120, 150000)">たけなん</button>
+        <button class="btn-preset btn-host" onclick="setHost(1086100, 150000)">はげまんと</button>
+    </div>
+
     <div class="input-row">
         <div class="label">合計兵数</div>
-        <input type="number" id="total" value="55000">
+        <input type="number" id="total" value="">
     </div>
 
     <div class="input-row">
         <div class="label label-blue">集結主兵数</div>
-        <input type="number" id="minus" value="5000">
+        <input type="number" id="minus" value="">
     </div>
 
     <div class="input-row">
         <div class="label">現在の人数</div>
-        <input type="number" id="divisor" value="15">
+        <input type="number" id="divisor" value="10">
         <span class="unit">人</span>
     </div>
-    <div class="note">※集結主を含めた人数をそのまま入力</div>
+    <div class="note">※集結主を含めた人数を入力</div>
 
+    <div class="preset-section-label">📊 作戦を選択</div>
     <div class="preset-group">
         <button class="btn-preset" onclick="setRatios(60, 20, 20)">🛡️ 防衛</button>
         <button class="btn-preset" onclick="setRatios(50, 20, 30)">⚔️ 攻撃</button>
@@ -88,6 +100,14 @@
 </div>
 
 <script>
+    // 集結主の値をセットする関数
+    function setHost(total, minus) {
+        document.getElementById('total').value = total;
+        document.getElementById('minus').value = minus;
+        runCalc();
+    }
+
+    // 割合の値をセットする関数
     function setRatios(a, b, c) {
         document.getElementById('ratioA').value = a;
         document.getElementById('ratioB').value = b;
@@ -102,7 +122,8 @@
 
         const totalRatio = raVal + rbVal + rcVal;
         if (totalRatio !== 100) {
-            alert("エラー：割合の合計が " + totalRatio + "% です。\n合計を100%にしてください。");
+            // 値が空の時はアラートを出さない（初期状態対策）
+            if(totalRatio !== 0) alert("エラー：割合の合計が " + totalRatio + "% です。\n合計を100%にしてください。");
             document.getElementById('result').style.display = 'none';
             return;
         }
@@ -119,7 +140,7 @@
 
         const base = (t - m) / d;
         
-        // 【修正】Math.round（四捨五入）を Math.ceil（繰り上げ）に変更
+        // 繰り上げ計算
         const valA = Math.ceil(base * ra);
         const valB = Math.ceil(base * rb);
         const valC = Math.ceil(base * rc);
