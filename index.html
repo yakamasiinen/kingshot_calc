@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kingshot部隊計算機(Ver.2.2)</title>
+    <title>kingshot部隊計算機(Ver.2.3)</title>
     <style>
         body { font-family: sans-serif; background-color: #f5f5f5; display: flex; justify-content: center; padding: 20px; }
         .calc-card { background-color: #f0f0f0; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; max-width: 480px; }
@@ -110,7 +110,6 @@
         const t = parseFloat(document.getElementById('total').value) || 0;
         const m = parseFloat(document.getElementById('minus').value) || 0;
         
-        // 【修正ポイント】入力された人数から自動的に1を引く
         const rawDivisor = parseFloat(document.getElementById('divisor').value) || 2;
         const d = (rawDivisor - 1) > 0 ? (rawDivisor - 1) : 1; 
 
@@ -120,9 +119,10 @@
 
         const base = (t - m) / d;
         
-        const valA = Math.round(base * ra);
-        const valB = Math.round(base * rb);
-        const valC = Math.round(base * rc);
+        // 【修正】Math.round（四捨五入）を Math.ceil（繰り上げ）に変更
+        const valA = Math.ceil(base * ra);
+        const valB = Math.ceil(base * rb);
+        const valC = Math.ceil(base * rc);
         const sumAll = valA + valB + valC;
 
         document.getElementById('outA').innerText = valA.toLocaleString() + " 人";
